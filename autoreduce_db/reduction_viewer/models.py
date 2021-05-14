@@ -75,6 +75,10 @@ class Status(models.Model):
         """
         return self.value_verbose()
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._cached_statuses = {}
+
     def _get_status(self, status_value: str):
         """
         Attempt to get a status matching the given name or create one if it

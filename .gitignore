@@ -2,7 +2,9 @@
 .idea/*
 */target/**
 .pytest_cache/
+build/
 
+*.egg-info
 
 # Ignore complied python
 *.pyc

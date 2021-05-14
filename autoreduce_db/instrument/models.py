@@ -8,7 +8,7 @@
 Definition of Variable classes used for the WebApp model
 """
 from django.db import models
-from reduction_viewer.models import Instrument, ReductionRun
+from autoreduce_db.reduction_viewer.models import Instrument, ReductionRun
 
 
 class Variable(models.Model):
