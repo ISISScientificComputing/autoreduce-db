@@ -86,11 +86,11 @@ jobs:
 
       - name: Pylint tests
         run: |
-          PYTHONPATH=autoreduce_qp pylint --load-plugins=pylint_django autoreduce_qp
+          PYTHONPATH=autoreduce_db pylint --load-plugins=pylint_django autoreduce_db
 
       - name: YAPF
         run: python -m yapf --parallel --diff --recursive .
 
       - name: Vulture
-        run: vulture --min-confidence 90 autoreduce_qp
+        run: vulture --min-confidence 90 autoreduce_db
 
