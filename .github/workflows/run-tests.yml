@@ -27,7 +27,7 @@ jobs:
 
       - name: Run unit tests
         run: >-
-          pytest autoreduce_db
+          pytest autoreduce_db --cov=autoreduce_db --cov-report=xml
 
       - uses: codecov/codecov-action@v1
         with:
