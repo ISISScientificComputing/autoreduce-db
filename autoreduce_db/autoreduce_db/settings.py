@@ -11,22 +11,22 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import configparser
-from pathlib import Path
 import os
-
+from pathlib import Path
 
 # Read the utilities .ini file that contains service credentials
 CONFIG_ROOT = str(Path("~/.autoreduce").expanduser())
-INI_FILE = os.environ.get("AUTOREDUCTION_CREDENTIALS", os.path.expanduser(f"{CONFIG_ROOT}/credentials.ini"))
+INI_FILE = os.environ.get("AUTOREDUCTION_CREDENTIALS", os.path.join(f"{CONFIG_ROOT}/credentials.ini"))
 CONFIG = configparser.ConfigParser()
 CONFIG.read(INI_FILE)
 
+DEV_DB_ROOT = Path(CONFIG_ROOT, "dev")
+DEV_DB_ROOT.mkdir(parents=True, exist_ok=True)
+
 
 def get_str(section, key):
+    """Gets the value of a key"""
     return str(CONFIG.get(section, key))
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -89,7 +89,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'autoreduce_db.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -118,8 +117,8 @@ elif "AUTOREDUCTION_PRODUCTION" in os.environ:
 else:  # the default development DB backend
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': f'{BASE_DIR}/sqlite3.db',  # Or path to database file if using sqlite3.
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(DEV_DB_ROOT, "sqlite3.db"),
         }
     }
 
@@ -141,7 +140,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -154,7 +152,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
