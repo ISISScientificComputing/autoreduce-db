@@ -23,7 +23,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: ./.github/actions/build-autoreduction
+      - uses: ISISScientificComputing/autoreduce-actions/build@cond
+        with:
+          package_name: autoreduce_db
+          run_activemq: false
+          migrate_creds: false
 
       - name: Run unit tests
         run: >-
@@ -40,7 +44,7 @@ jobs:
   dependency-check:
     name: Dependency-Check
     runs-on: ubuntu-18.04
-    container: centos/python-36-centos7
+    container: autoreduction/base
     strategy:
       fail-fast: false
 
@@ -81,15 +85,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: ./.github/actions/build-autoreduction
+      - uses: ISISScientificComputing/autoreduce-actions/build@cond
+        with:
+          package_name: autoreduce_db
+          run_activemq: false
+          migrate_creds: false
 
-      - name: Pylint tests
-        run: |
-          PYTHONPATH=autoreduce_db pylint --load-plugins=pylint_django autoreduce_db
+      - uses: ISISScientificComputing/autoreduce-actions/code_inspection@master
+        with:
+          package_name: autoreduce_db
 
-      - name: YAPF
-        run: python -m yapf --parallel --diff --recursive .
-
-      - name: Vulture
-        run: vulture --min-confidence 90 autoreduce_db
 
