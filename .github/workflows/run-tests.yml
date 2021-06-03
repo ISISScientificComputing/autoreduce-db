@@ -23,7 +23,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: ISISScientificComputing/autoreduce-actions/build@master
+      - uses: ISISScientificComputing/autoreduce-actions/build@cond
         with:
           package_name: autoreduce_db
 
