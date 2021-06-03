@@ -23,7 +23,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: ISISScientificComputing/autoreduce-actions/build@cond
+      - uses: ISISScientificComputing/autoreduce-actions/build@master
         with:
           package_name: autoreduce_db
           run_activemq: false
@@ -85,7 +85,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - uses: ISISScientificComputing/autoreduce-actions/build@cond
+      - uses: ISISScientificComputing/autoreduce-actions/build@master
         with:
           package_name: autoreduce_db
           run_activemq: false
