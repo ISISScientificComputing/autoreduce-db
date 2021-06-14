@@ -12,16 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import configparser
 import os
-from pathlib import Path
+from autoreduce_utils.runtime_settings import CREDENTIALS_INI_FILE
 
 # Read the utilities .ini file that contains service credentials
-CONFIG_ROOT = os.environ.get("AUTOREDUCTION_USERDIR", str(Path("~/.autoreduce").expanduser()))
-INI_FILE = os.environ.get("AUTOREDUCTION_CREDENTIALS", os.path.join(f"{CONFIG_ROOT}/credentials.ini"))
 CONFIG = configparser.ConfigParser()
-CONFIG.read(INI_FILE)
-
-DEV_DB_ROOT = Path(CONFIG_ROOT, "dev")
-DEV_DB_ROOT.mkdir(parents=True, exist_ok=True)
+CONFIG.read(CREDENTIALS_INI_FILE)
 
 
 def get_str(section, key):
