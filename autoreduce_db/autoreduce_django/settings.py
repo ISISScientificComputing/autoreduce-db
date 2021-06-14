@@ -10,19 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-import configparser
 import os
-from autoreduce_utils.runtime_settings import CREDENTIALS_INI_FILE
-
-# Read the utilities .ini file that contains service credentials
-CONFIG = configparser.ConfigParser()
-CONFIG.read(CREDENTIALS_INI_FILE)
-
-
-def get_str(section, key):
-    """Gets the value of a key"""
-    return str(CONFIG.get(section, key))
-
+from autoreduce_utils.credentials import DB_CREDENTIALS
+from autoreduce_utils.settings import PROJECT_DEV_ROOT
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -55,11 +45,11 @@ elif "AUTOREDUCTION_PRODUCTION" in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': get_str('DATABASE', 'name'),
-            'USER': get_str('DATABASE', 'user'),
-            'PASSWORD': get_str('DATABASE', 'password'),
-            'HOST': get_str('DATABASE', 'host'),
-            'PORT': get_str('DATABASE', 'port'),
+            'NAME': DB_CREDENTIALS["name"],
+            'USER': DB_CREDENTIALS['user'],
+            'PASSWORD': DB_CREDENTIALS['password'],
+            'HOST': DB_CREDENTIALS['host'],
+            'PORT': DB_CREDENTIALS['port'],
             'OPTIONS': {
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             },
@@ -70,6 +60,6 @@ else:  # the default development DB backend
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(DEV_DB_ROOT, "sqlite3.db"),
+            'NAME': os.path.join(PROJECT_DEV_ROOT, "sqlite3.db"),
         }
     }
