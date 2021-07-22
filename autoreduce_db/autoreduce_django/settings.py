@@ -45,11 +45,11 @@ elif "AUTOREDUCTION_PRODUCTION" in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': DB_CREDENTIALS["name"],
-            'USER': DB_CREDENTIALS['user'],
-            'PASSWORD': DB_CREDENTIALS['password'],
-            'HOST': DB_CREDENTIALS['host'],
-            'PORT': DB_CREDENTIALS['port'],
+            'NAME': DB_CREDENTIALS.database,
+            'USER': DB_CREDENTIALS.username,
+            'PASSWORD': DB_CREDENTIALS.password,
+            'HOST': DB_CREDENTIALS.host,
+            'PORT': DB_CREDENTIALS.port,
             'OPTIONS': {
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
             },
