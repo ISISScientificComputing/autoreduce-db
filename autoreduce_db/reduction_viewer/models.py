@@ -148,6 +148,7 @@ class ReductionRun(models.Model):
     reduction_host = models.TextField(default="", blank=True, verbose_name="Reduction hostname")
     # Scripts should be 100,000 chars or less. The DB supports up to 4GB strings here
     script = models.TextField(blank=False, validators=[MaxLengthValidator(100000)])
+    data_location = models.CharField(max_length=255)
 
     # Date time fields
     created = models.DateTimeField(auto_now_add=True, blank=False)
@@ -193,20 +194,6 @@ class ReductionRun(models.Model):
         else:
             title = '%s' % self.run_number
         return title
-
-
-class DataLocation(models.Model):
-    """
-    Represents the location at which the unreduced data is stored on disk
-    """
-    file_path = models.CharField(max_length=255)
-    reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='data_location', on_delete=models.CASCADE)
-
-    def __str__(self):
-        """
-        :return: str representation of file path
-        """
-        return f"{self.file_path}"
 
 
 class ReductionLocation(models.Model):
