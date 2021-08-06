@@ -1,8 +1,9 @@
 from django.db import migrations, models
 
 
-def merge_datalocation_into_reductionrun(apps, schema_editor):
+def merge_datalocation_into_reductionrun(apps, _):
     """
+    Moves the values from the DataLocation model into the field of the ReductionRun
     """
     ReductionRun = apps.get_model("reduction_viewer", "ReductionRun")
     for run in ReductionRun.objects.all():
