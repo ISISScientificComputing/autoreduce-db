@@ -1,6 +1,6 @@
 # Test Env. Requirements
 
-coveralls==3.1.0
+coveralls==3.2.0
 parameterized==0.8.1
 pylint==2.9.6
 pylint-django==2.4.4
