@@ -8,6 +8,7 @@ def merge_datalocation_into_reductionrun(apps, _):
     ReductionRun = apps.get_model("reduction_viewer", "ReductionRun")
     for run in ReductionRun.objects.all():
         run.data_location_tmp = run.data_location.first().file_path
+        run.save()
 
 
 class Migration(migrations.Migration):
