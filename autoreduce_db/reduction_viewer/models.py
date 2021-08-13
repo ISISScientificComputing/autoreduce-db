@@ -148,7 +148,6 @@ class ReductionRun(models.Model):
     reduction_host = models.TextField(default="", blank=True, verbose_name="Reduction hostname")
     # Scripts should be 100,000 chars or less. The DB supports up to 4GB strings here
     script = models.TextField(blank=False, validators=[MaxLengthValidator(100000)])
-    data_location = models.CharField(max_length=255)
 
     # Date time fields
     created = models.DateTimeField(auto_now_add=True, blank=False)
