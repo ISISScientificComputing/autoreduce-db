@@ -196,6 +196,20 @@ class ReductionRun(models.Model):
         return title
 
 
+class DataLocation(models.Model):
+    """
+    Represents the location at which the unreduced data is stored on disk
+    """
+    file_path = models.CharField(max_length=255)
+    reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='data_location', on_delete=models.CASCADE)
+
+    def __str__(self):
+        """
+        :return: str representation of file path
+        """
+        return f"{self.file_path}"
+
+
 class ReductionLocation(models.Model):
     """
     Represents the location at which the reduced data is stored on disk
