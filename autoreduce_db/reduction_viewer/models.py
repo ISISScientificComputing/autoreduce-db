@@ -133,7 +133,6 @@ class ReductionRun(models.Model):
     takes place at ISIS. Thus, this will store all the relevant data regarding that run.
     """
     # Integer fields
-    run_number = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
     run_version = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
     started_by = models.IntegerField(null=True, blank=True)
 
@@ -193,6 +192,29 @@ class ReductionRun(models.Model):
         else:
             title = '%s' % self.run_number
         return title
+
+    @property
+    def run_number(self) -> int:
+        """Returns the value of the run_number, if only a single one is associated with this run.
+        This replicates the behaviour of a one to one relationship between a ReductionRun and a RunNumber
+        """
+
+        if self.run_numbers.count() == 1:
+            return self.run_numbers.first()
+        else:
+            raise ValueError(
+                "This run has more then one run_number associated with it. You must iterate run_numbers manually")
+
+
+class RunNumber(models.Model):
+    run_number = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
+    reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='run_numbers', on_delete=models.CASCADE)
+
+    def __str__(self):
+        """
+        :return: str representation of the run number
+        """
+        return f"{self.run_number}"
 
 
 class DataLocation(models.Model):
