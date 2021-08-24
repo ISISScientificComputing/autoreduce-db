@@ -158,6 +158,7 @@ class ReductionRun(models.Model):
     # Bool field
     hidden_in_failviewer = models.BooleanField(default=False)
     overwrite = models.NullBooleanField(default=True)
+    batch_run = models.BooleanField(default=False)
 
     # Foreign Keys
     experiment = models.ForeignKey(Experiment, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
@@ -177,7 +178,10 @@ class ReductionRun(models.Model):
         Return str representation of reduction run based on run name if available else run number
         :return: str representation of ReductionRun
         """
-        return f"{self.run_number}: {self.run_description}" if self.run_description else f"{self.run_number}"
+        if self.run_description:
+            return f"{self.run_number} - v{self.run_version} : {self.run_description}"
+        else:
+            return f"{self.run_number} - v{self.run_version}"
 
     def title(self):
         """
