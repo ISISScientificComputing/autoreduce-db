@@ -185,16 +185,17 @@ class ReductionRun(models.Model):
 
     def title(self):
         """
-        :return: An interface-friendly name that identifies this run using either
-        run name or run version
+        :return: An interface-friendly name that identifies this run using the
+        run name and run version
         """
-        if self.run_version > 0:
-            if self.run_description:
-                title = '%s - %s' % (self.run_number, self.run_description)
-            else:
-                title = '%s - %s' % (self.run_number, self.run_version)
-        else:
+        try:
             title = '%s' % self.run_number
+        except ValueError:
+            title = '%s' % [run.run_number for run in self.run_numbers.all()]
+        if self.run_description:
+            title += ' - %s' % self.run_description
+        if self.run_version > 0:
+            title += ' - %s' % self.run_version
         return title
 
     @property
@@ -204,7 +205,7 @@ class ReductionRun(models.Model):
         """
 
         if self.run_numbers.count() == 1:
-            return self.run_numbers.first()
+            return self.run_numbers.first().run_number
         else:
             raise ValueError(
                 "This run has more then one run_number associated with it. You must iterate run_numbers manually")

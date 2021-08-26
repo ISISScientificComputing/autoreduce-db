@@ -63,3 +63,5 @@ else:  # the default development DB backend
             'NAME': os.path.join(PROJECT_DEV_ROOT, "sqlite3.db"),
         }
     }
+
+USE_TZ = True
