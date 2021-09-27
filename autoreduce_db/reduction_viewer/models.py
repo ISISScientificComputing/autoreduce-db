@@ -178,10 +178,7 @@ class ReductionRun(models.Model):
         Return str representation of reduction run based on run name if available else run number
         :return: str representation of ReductionRun
         """
-        if self.run_description:
-            return f"{self.run_number} - v{self.run_version} : {self.run_description}"
-        else:
-            return f"{self.run_number} - v{self.run_version}"
+        return self.title()
 
     def title(self):
         """
