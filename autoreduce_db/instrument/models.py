@@ -26,7 +26,7 @@ class Variable(models.Model):
         """
         Encodes the name in a urlsafe base64 representaiton.
         Used to encode variable names with any character without
-special handling for having whitespaces or special characters.
+        special handling for having whitespaces or special characters.
         """
         # pylint:disable=no-member
         return base64.urlsafe_b64encode(self.name.encode("utf-8")).decode("utf-8")
