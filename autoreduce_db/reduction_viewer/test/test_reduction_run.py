@@ -23,7 +23,7 @@ class TestReductionRun(TestCase):
     def test_title_multiple_run_numbers(self):
         """Test that retrieving the status returns the expected one"""
         self.reduction_run.run_numbers.create(run_number=123457)
-        assert self.reduction_run.title() == "[123456, 123457] - This is the test run_description"
+        assert self.reduction_run.title() == "Batch 123456 → 123457 - This is the test run_description"
 
     def test_run_number(self):
         """Test that retrieving the status returns the expected one"""
