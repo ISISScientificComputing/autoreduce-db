@@ -178,10 +178,7 @@ class ReductionRun(models.Model):
         Return str representation of reduction run based on run name if available else run number
         :return: str representation of ReductionRun
         """
-        if self.run_description:
-            return f"{self.run_number} - v{self.run_version} : {self.run_description}"
-        else:
-            return f"{self.run_number} - v{self.run_version}"
+        return self.title()
 
     def title(self):
         """
@@ -191,11 +188,11 @@ class ReductionRun(models.Model):
         try:
             title = '%s' % self.run_number
         except ValueError:
-            title = '%s' % [run.run_number for run in self.run_numbers.all()]
-        if self.run_description:
-            title += ' - %s' % self.run_description
+            title = 'Batch %s → %s' % (self.run_numbers.first(), self.run_numbers.last())
         if self.run_version > 0:
             title += ' - %s' % self.run_version
+        if self.run_description:
+            title += ' - %s' % self.run_description
         return title
 
     @property
