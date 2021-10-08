@@ -14,7 +14,10 @@ def move_script_into_reduction_script(apps, _):
     ReductionScript = apps.get_model("reduction_viewer", "ReductionScript")
 
     for run in ReductionRun.objects.all():
-        rscript = ReductionScript.objects.create(text=run.tmp_script)
+        try:
+            rscript = ReductionScript.objects.get(text=run.tmp_script)
+        except: # pylint:disable=bare-except
+            rscript = ReductionScript.objects.create(text=run.tmp_script)
         rscript.save()
         run.script_id = rscript.pk
         run.save()
