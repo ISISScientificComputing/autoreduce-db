@@ -10,6 +10,10 @@ from django.core.validators import MinValueValidator, MaxLengthValidator
 from django.db import models
 
 
+class ReductionScript(models.Model):
+    text = models.TextField(blank=True, validators=[MaxLengthValidator(100000)])
+
+
 class Instrument(models.Model):
     """Holds data about an Instrument."""
     name = models.CharField(max_length=80)
@@ -129,8 +133,6 @@ class ReductionRun(models.Model):
     message = models.TextField(null=True, blank=True)
     reduction_log = models.TextField(blank=True)
     reduction_host = models.TextField(default="", blank=True, verbose_name="Reduction hostname")
-    # Scripts should be 100,000 chars or less. The DB supports up to 4GB strings here
-    script = models.TextField(blank=False, validators=[MaxLengthValidator(100000)])
 
     # Date time fields
     created = models.DateTimeField(auto_now_add=True, blank=False)
@@ -147,6 +149,11 @@ class ReductionRun(models.Model):
     # Foreign Keys
     experiment = models.ForeignKey(Experiment, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
     instrument = models.ForeignKey(Instrument, related_name='reduction_runs', null=True, on_delete=models.CASCADE)
+    # arguments = models.ForeignKey(ReductionArguments,
+    #                               blank=False,
+    #                               related_name='reduction_runs',
+    #                               on_delete=models.CASCADE)
+    script = models.ForeignKey(ReductionScript, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
     retry_run = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     status = models.ForeignKey(Status, blank=False, related_name='+', on_delete=models.CASCADE)
     # Allowed software field to be black in code line below. Issued opened (#852) to later
