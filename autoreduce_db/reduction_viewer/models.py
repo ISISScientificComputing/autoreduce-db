@@ -6,12 +6,22 @@
 # ############################################################################### #
 """Models that represent the tables in the database."""
 # pylint:disable=no-member
-from django.core.validators import MinValueValidator, MaxLengthValidator
+import json
+from django.core.validators import MaxLengthValidator, MinValueValidator
 from django.db import models
 
 
 class ReductionScript(models.Model):
     text = models.TextField(blank=True, validators=[MaxLengthValidator(100000)])
+
+
+class ReductionArguments(models.Model):
+    raw = models.TextField(blank=False, validators=[MaxLengthValidator(100000)])
+    start_run = models.IntegerField(blank=False)
+
+    def as_dict(self):
+        """Loads the raw string back into a dict object and returns it."""
+        return json.loads(self.raw)
 
 
 class Instrument(models.Model):
@@ -149,10 +159,10 @@ class ReductionRun(models.Model):
     # Foreign Keys
     experiment = models.ForeignKey(Experiment, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
     instrument = models.ForeignKey(Instrument, related_name='reduction_runs', null=True, on_delete=models.CASCADE)
-    # arguments = models.ForeignKey(ReductionArguments,
-    #                               blank=False,
-    #                               related_name='reduction_runs',
-    #                               on_delete=models.CASCADE)
+    arguments = models.ForeignKey(ReductionArguments,
+                                  blank=False,
+                                  related_name='reduction_runs',
+                                  on_delete=models.CASCADE)
     script = models.ForeignKey(ReductionScript, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
     retry_run = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     status = models.ForeignKey(Status, blank=False, related_name='+', on_delete=models.CASCADE)
