@@ -7,6 +7,7 @@
 """
 Definition of Variable classes used for the WebApp model
 """
+import base64
 from django.db import models
 from autoreduce_db.reduction_viewer.models import Instrument, ReductionRun
 
@@ -21,12 +22,21 @@ class Variable(models.Model):
     is_advanced = models.BooleanField(default=False)
     help_text = models.TextField(blank=True, null=True, default='')
 
-    def sanitized_name(self):
+    def encode_name_b64(self):
         """
-        Returns a HTMl-friendly name that can be used as element IDs or form input names
+        Encodes the name in a urlsafe base64 representaiton.
+        Used to encode variable names with any character without
+        special handling for having whitespaces or special characters.
         """
         # pylint:disable=no-member
-        return self.name.replace(' ', '-')
+        return base64.urlsafe_b64encode(self.name.encode("utf-8")).decode("utf-8")
+
+    @staticmethod
+    def decode_name_b64(b64_encoded_name: str):
+        """
+        Decodes the base64 representation back to utf-8 string.
+        """
+        return base64.urlsafe_b64decode(b64_encoded_name).decode("utf-8")
 
 
 class InstrumentVariable(Variable):
@@ -46,7 +56,7 @@ class InstrumentVariable(Variable):
 
     # pylint:disable=no-member
     def __str__(self):
-        return f"{self.instrument.name} - {self.name}=self.value"
+        return f"{self.instrument.name} - {self.name}={self.value}"
 
 
 class RunVariable(models.Model):

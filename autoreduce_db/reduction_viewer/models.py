@@ -114,7 +114,6 @@ class ReductionRun(models.Model):
     relevant data regarding that run.
     """
     # Integer fields
-    run_number = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
     run_version = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
     started_by = models.IntegerField(null=True, blank=True)
 
@@ -141,6 +140,7 @@ class ReductionRun(models.Model):
     # Bool field
     hidden_in_failviewer = models.BooleanField(default=False)
     overwrite = models.NullBooleanField(default=True)
+    batch_run = models.BooleanField(default=False)
 
     # Foreign Keys
     experiment = models.ForeignKey(Experiment, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
@@ -158,20 +158,48 @@ class ReductionRun(models.Model):
     )
 
     def __str__(self):
-        """Return reduction run based on run name if available else run number."""
-        return f"{self.run_number}: {self.run_description}" if self.run_description else f"{self.run_number}"
+        return self.title()
 
     def title(self):
         """
         Return an interface-friendly name that identifies this run using either
         run name or run version.
         """
+        try:
+            title = self.run_number
+        except ValueError:
+            title = f"Batch {self.run_numbers.first()} → {self.run_numbers.last()}"
+        
+        if self.run_version > 0:
+            title += f" - {self.run_version}"
+            
         if self.run_title:
-            return f"{self.run_number} - {self.run_title}"
-        elif self.run_version > 0:
-            return f"{self.run_number} - {self.run_version}"
+            title += f" - {self.run_title}"
+            
+        return title
+
+    @property
+    def run_number(self) -> int:
+        """Returns the value of the run_number, if only a single one is associated with this run.
+        This replicates the behaviour of a one to one relationship between a ReductionRun and a RunNumber
+        """
+
+        if self.run_numbers.count() == 1:
+            return self.run_numbers.first().run_number
         else:
-            return self.run_number
+            raise ValueError(
+                "This run has more then one run_number associated with it. You must iterate run_numbers manually")
+
+
+class RunNumber(models.Model):
+    run_number = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
+    reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='run_numbers', on_delete=models.CASCADE)
+
+    def __str__(self):
+        """
+        :return: str representation of the run number
+        """
+        return f"{self.run_number}"
 
 
 class DataLocation(models.Model):
