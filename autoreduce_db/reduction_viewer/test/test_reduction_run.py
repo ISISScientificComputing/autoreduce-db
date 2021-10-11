@@ -1,12 +1,18 @@
+# ############################################################################### #
+# Autoreduction Repository : https://github.com/ISISScientificComputing/autoreduce
+#
+# Copyright &copy; 2021 ISIS Rutherford Appleton Laboratory UKRI
+# SPDX - License - Identifier: GPL-3.0-or-later
+# ############################################################################### #
+"""Tests for the ReductionRun class."""
+# pylint:disable=no-member
 from django.test import TestCase
 
 from autoreduce_db.reduction_viewer.models import ReductionRun
 
 
 class TestReductionRun(TestCase):
-    """
-    Directly tests the message handling classes
-    """
+    """Directly tests the message handling classes."""
     fixtures = [
         "autoreduce_db/autoreduce_django/fixtures/status_fixture.json",
         "autoreduce_db/autoreduce_django/fixtures/run_with_multiple_variables.json"
@@ -16,21 +22,89 @@ class TestReductionRun(TestCase):
         self.reduction_run = ReductionRun.objects.first()
         return super().setUp()
 
-    def test_title(self):
-        """Test that retrieving the status returns the expected one"""
-        assert self.reduction_run.title() == "123456 - This is the test run_description"
+    def test_title_with_one_run_number(self):
+        """
+        Test that retrieving the title of a `ReductionRun` with just one run and
+        no other attributes returns just the run number.
+        """
+        assert self.reduction_run.title() == "123456"
 
-    def test_title_multiple_run_numbers(self):
-        """Test that retrieving the status returns the expected one"""
-        self.reduction_run.run_numbers.create(run_number=123457)
-        assert self.reduction_run.title() == "Batch 123456 → 123457 - This is the test run_description"
+    def test_title_with_one_run_number_and_version(self):
+        """
+        Test that retrieving the title of a `ReductionRun` with just one run and
+        a given `run_version` returns the run number followed by the run
+        version.
+        """
+        run_version = self.reduction_run.run_version = 2
+        assert self.reduction_run.title() == f"123456 - {run_version}"
+
+    def test_title_with_one_run_number_and_title(self):
+        """
+        Test that retrieving the title of a `ReductionRun` with just one run and
+        a given `run_title` returns the run number followed by the run title.
+        """
+        run_title = self.reduction_run.run_title = "larmor0102"
+        assert self.reduction_run.title() == f"123456 - {run_title}"
+
+    def test_title_with_one_run_number_and_title_and_version(self):
+        """
+        Test that retrieving the title of a ReductionRun with just one run and
+        a given `run_title` returns the run number followed by the run version
+        and run title.
+        """
+        run_version = self.reduction_run.run_version = 2
+        run_title = self.reduction_run.run_title = "larmor0102"
+        assert self.reduction_run.title() == f"123456 - {run_version} - {run_title}"
+
+    def test_title_with_multiple_run_numbers(self):
+        """
+        Test that retrieving the title of a ReductionRun with a batch of runs
+        returns the expected batch.
+        """
+        next_run = 123457
+        self.reduction_run.run_numbers.create(run_number=next_run)
+        assert self.reduction_run.title() == f"Batch 123456 → {next_run}"
+
+    def test_title_with_multiple_run_numbers_and_version(self):
+        """
+        Test that retrieving the title of a ReductionRun with a batch of runs
+        and a given `run_version` returns the expected batch followed by the run
+        version.
+        """
+        next_run = 123457
+        self.reduction_run.run_numbers.create(run_number=next_run)
+        run_version = self.reduction_run.run_version = 2
+        assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_version}"
+
+    def test_title_with_multiple_run_numbers_and_title(self):
+        """
+        Test that retrieving the title of a ReductionRun with a batch of runs
+        and a given `run_title` returns the expected batch followed by the run
+        title.
+        """
+        next_run = 123457
+        self.reduction_run.run_numbers.create(run_number=next_run)
+        run_title = self.reduction_run.run_title = "larmor0102"
+        assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_title}"
+
+    def test_title_with_multiple_run_numbers_and_title_and_version(self):
+        """
+        Test that retrieving the title of a ReductionRun with a batch of runs
+        and a given `run_version` and `run_title` returns the expected batch
+        followed by the run version and run title.
+        """
+        next_run = 123457
+        self.reduction_run.run_numbers.create(run_number=next_run)
+        run_version = self.reduction_run.run_version = 2
+        run_title = self.reduction_run.run_title = "larmor0102"
+        assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_version} - {run_title}"
 
     def test_run_number(self):
-        """Test that retrieving the status returns the expected one"""
+        """Test that retrieving the status returns the expected one."""
         assert self.reduction_run.run_number == 123456
 
     def test_run_number_multiple_run_numbers(self):
-        """Test that retrieving the status returns the expected one"""
+        """Test that retrieving the status returns the expected one."""
         self.reduction_run.run_numbers.create(run_number=123457)
         with self.assertRaises(ValueError):
             self.reduction_run.run_number
