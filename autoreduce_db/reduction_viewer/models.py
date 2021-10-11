@@ -60,9 +60,11 @@ class Status(models.Model):
     @staticmethod
     def _get_status(status_value: str):
         """
-        Attempt to get a status matching the given name or create one if it
-        doesn't yet exist
-        :param status_value: The value of the status record in the database
+        Return a status matching the given name or create one if it doesn't yet
+        exist.
+
+        Args:
+            status_value: The value of the status record in the database.
         """
         if status_value in Status._cached_statuses:
             return Status._cached_statuses[status_value]
@@ -166,24 +168,25 @@ class ReductionRun(models.Model):
         run name or run version.
         """
         try:
-            title = self.run_number
+            title = f"{self.run_number}"
         except ValueError:
             title = f"Batch {self.run_numbers.first()} → {self.run_numbers.last()}"
-        
+
         if self.run_version > 0:
             title += f" - {self.run_version}"
-            
+
         if self.run_title:
             title += f" - {self.run_title}"
-            
+
         return title
 
     @property
     def run_number(self) -> int:
-        """Returns the value of the run_number, if only a single one is associated with this run.
-        This replicates the behaviour of a one to one relationship between a ReductionRun and a RunNumber
         """
-
+        Return the value of the run_number, if only a single one is associated
+        with this run. This replicates the behaviour of a one to one
+        relationship between a ReductionRun and a RunNumber.
+        """
         if self.run_numbers.count() == 1:
             return self.run_numbers.first().run_number
         else:
@@ -196,9 +199,6 @@ class RunNumber(models.Model):
     reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='run_numbers', on_delete=models.CASCADE)
 
     def __str__(self):
-        """
-        :return: str representation of the run number
-        """
         return f"{self.run_number}"
 
 
