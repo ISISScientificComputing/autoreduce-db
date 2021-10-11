@@ -40,7 +40,7 @@ def convert_variables_to_reduction_arguments(apps, _):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reduction_viewer', '0009_move_script_into_reductionscript'),
+        ('reduction_viewer', '0010_move_script_into_reductionscript'),
     ]
 
     operations = [

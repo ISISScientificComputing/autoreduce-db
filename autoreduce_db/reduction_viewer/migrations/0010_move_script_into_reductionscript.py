@@ -16,7 +16,7 @@ def move_script_into_reduction_script(apps, _):
     for run in ReductionRun.objects.all():
         try:
             rscript = ReductionScript.objects.get(text=run.tmp_script)
-        except: # pylint:disable=bare-except
+        except:  # pylint:disable=bare-except
             rscript = ReductionScript.objects.create(text=run.tmp_script)
         rscript.save()
         run.script_id = rscript.pk
@@ -26,7 +26,7 @@ def move_script_into_reduction_script(apps, _):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reduction_viewer', '0008_reductionrun_batch_run'),
+        ('reduction_viewer', '0009_reductionrun_run_title'),
     ]
 
     operations = [

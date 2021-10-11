@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('instrument', '0004_auto_20210426_1600'),
-        ('reduction_viewer', '0010_move_arguments_into_reductionarguments'),
+        ('reduction_viewer', '0011_move_arguments_into_reductionarguments'),
     ]
 
     operations = [
