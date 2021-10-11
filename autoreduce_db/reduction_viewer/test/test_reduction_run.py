@@ -109,3 +109,12 @@ class TestReductionRun(TestCase):
         with self.assertRaises(ValueError):
             self.reduction_run.run_number
         assert [run.run_number for run in self.reduction_run.run_numbers.all()] == [123456, 123457]
+
+    def test_run_arguments(self):
+        """Test that retrieving the arguments and converting them to a dict works"""
+        args = self.reduction_run.arguments.as_dict()
+        assert "standard_vars" in args
+
+    def test_run_script(self):
+        """Test that retrieving the script works"""
+        assert "def main" in self.reduction_run.script.text
