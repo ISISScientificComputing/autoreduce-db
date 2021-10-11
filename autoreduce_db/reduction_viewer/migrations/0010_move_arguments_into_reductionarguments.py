@@ -28,18 +28,11 @@ def convert_variables_to_reduction_arguments(apps, _):
             arguments_dict["variable_help"][key][var.name] = var.help_text
 
         arguments_json = json.dumps(arguments_dict, separators=(',', ':'))
-        if run.run_variables.count() > 0:
-            start_run = run.run_variables.first().variable.instrumentvariable.start_run
-            if start_run is None:
-                start_run = 0
-        else:
-            start_run = 0
-        try:
-            arguments = ReductionArguments.objects.get(raw=arguments_json, start_run=start_run)
-            print(f"{run.pk} Found")
-        except:
-            arguments = ReductionArguments.objects.create(raw=arguments_json, start_run=start_run)
-            print(f"{run.pk} Creating")
+        arguments, created = ReductionArguments.objects.get_or_create(raw=arguments_json,
+                                                                      start_run=None,
+                                                                      experiment_reference=None,
+                                                                      instrument=run.instrument)
+        print(f"{run.pk} Found" if not created else f"{run.pk} Created")
         run.arguments = arguments
         run.save()
 
@@ -56,7 +49,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('raw', models.TextField(validators=[django.core.validators.MaxLengthValidator(100000)])),
-                ('start_run', models.IntegerField()),
+                ('start_run', models.IntegerField(null=True, blank=True)),
+                ('experiment_reference', models.IntegerField(null=True, blank=True)),
+                ('instrument', models.ForeignKey('Instrument', on_delete=models.CASCADE, related_name="arguments")),
             ],
         ),
         migrations.AddField(

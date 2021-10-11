@@ -17,7 +17,9 @@ class ReductionScript(models.Model):
 
 class ReductionArguments(models.Model):
     raw = models.TextField(blank=False, validators=[MaxLengthValidator(100000)])
-    start_run = models.IntegerField(blank=False)
+    start_run = models.IntegerField(null=True, blank=True)
+    experiment_reference = models.IntegerField(blank=True, null=True)
+    instrument = models.ForeignKey('Instrument', on_delete=models.CASCADE, related_name="arguments")
 
     def as_dict(self):
         """Loads the raw string back into a dict object and returns it."""
