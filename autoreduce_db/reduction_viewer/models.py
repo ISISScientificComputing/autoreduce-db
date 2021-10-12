@@ -12,22 +12,50 @@ from django.db import models
 
 
 class ReductionScript(models.Model):
+    """
+    Holds a sharable reduction script's text.
+
+    Fields:
+        text: The script's text
+    """
     text = models.TextField(blank=True, validators=[MaxLengthValidator(100000)])
 
 
 class ReductionArguments(models.Model):
+    """
+    Holds a sharable reduction argument's raw JSON dump representation
+    as well as allows for scope of the arguments via start_run and experiment_reference
+
+    Fields:
+        start_run: The first run number from which the arguments will be effective.
+                They will be passed to the reduction script.
+        experiment_reference: The experiment for which the arguments will be effective.
+                Experiment arguments override ALL other arguments.
+                This is enforced in the queue processor.
+    """
     raw = models.TextField(blank=False, validators=[MaxLengthValidator(100000)])
     start_run = models.IntegerField(null=True, blank=True)
     experiment_reference = models.IntegerField(blank=True, null=True)
     instrument = models.ForeignKey('Instrument', on_delete=models.CASCADE, related_name="arguments")
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
         """Loads the raw string back into a dict object and returns it."""
         return json.loads(self.raw)
 
 
 class Instrument(models.Model):
-    """Holds data about an Instrument."""
+    """
+    Holds data about an Instrument.
+
+    Fields:
+        name: Name of the instrument
+        is_active: Whether the instrument is active. If not active,
+                   the queue processor will skip runs for it.
+        is_paused: Whether the instrument has been MANUALLY paused from the webapp.
+        is_flat_output: Determines the output structure of the reduction.
+                        If true, the output for all run versions will be in the same folder.
+                        If false, each run version will be saved in a separate folder.
+    """
     name = models.CharField(max_length=80)
     is_active = models.BooleanField(default=False)
     is_paused = models.BooleanField(default=False)
@@ -36,10 +64,16 @@ class Instrument(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-    def get_last_for_rerun(self, runs=None):
+    def get_last_for_rerun(self, runs=None) -> 'ReductionRun':
         """
         Return the last non-skipped run. If all the runs are skipped, return the
         last skipped run.
+
+        Args:
+            runs: Pre-queried runs for the instrument.
+                  If None, then reduction_runs.all() will be queried from the database.
+        Returns:
+            The last not-skipped reduction run in the queryset.
         """
         if not runs:
             runs = self.reduction_runs.all()
@@ -52,7 +86,13 @@ class Instrument(models.Model):
 
 
 class Experiment(models.Model):
-    """Holds data about an Experiment."""
+    """
+    Holds data about an Experiment.
+
+    Fields:
+        reference_number: The experiment reference number assigned to the experiment.
+                          Also referred to as rb_number because of convention in ISIS.
+    """
     reference_number = models.IntegerField(unique=True)
 
     def __str__(self):
@@ -60,13 +100,19 @@ class Experiment(models.Model):
 
 
 class Status(models.Model):
-    """Enum table for status types of messages."""
+    """
+    Enum table for status types of messages. Caches the objects internally at runtime
+    to avoid repeated queries to the DB for the status objects.
+
+    Fields:
+        value: The value of the status. One of STATUS_CHOICES
+    """
     _cached_statuses = {}
     STATUS_CHOICES = (('q', 'Queued'), ('p', 'Processing'), ('s', 'Skipped'), ('c', 'Completed'), ('e', 'Error'))
 
     value = models.CharField(max_length=1, choices=STATUS_CHOICES)
 
-    def value_verbose(self):
+    def value_verbose(self) -> str:
         """Return the status as its textual value."""
         return dict(Status.STATUS_CHOICES)[self.value]
 
@@ -130,6 +176,46 @@ class ReductionRun(models.Model):
     Table designed to link all table together. This represents a single
     reduction run that takes place at ISIS. Thus, this will store all the
     relevant data regarding that run.
+
+
+    Fields:
+        run_version: The run version of the reduction run.
+                     This gets incremented if a run is re-run from the webapp.
+        started_by: The user who started the reduction run.
+                    Runs submitted from run_detection will have -1 as the user id, which
+                    gets assigned "Autoreduction service" in the webapp.
+        run_description: The description of the reduction run.
+                         Manually specified by the user during re-run.
+        run_title: The title of the reduction run. Value is taken from the ICAT
+                   entry for the run.
+        admin_log: The admin log for the reduction run, containing debug information
+                   for the runtime environment.
+        graph: FIXME - I am not sure this is used for anything anymore.
+        message: The ActiveMQ message with which the reduction run was submitted.
+                 Can be used to replicate the reduction run.
+        reduction_log: User facing output from the reduction execution, i.e. things that
+                       are logged to the stdout/console.
+        reduction_host: The hostname of the machine that ran the reduction. Useful
+                        for tracking down issues that occurred during reduction.
+        created: The date and time the reduction run was created.
+        finished: The date and time the reduction run was finished.
+        last_updated: The date and time the reduction run was last updated.
+        started: The date and time the reduction run was started.
+
+        hidden_in_failviewer: Can be set from failed queue page to hide the run from showing up
+                              in the failed queue page again.
+
+        overwrite: If true, the output folder will be overwritten.
+        batch_run: Whether this reduction run is for a batch run.
+
+        experiment: Foreign key to the experiment this reduction run belongs to.
+        instrument: Foreign key to the instrument this reduction run belongs to.
+        arguments: Foreign key to the arguments used to run the reduction.
+        script: Foreign key to the script used to run the reduction.
+        retry_run: Foreign key to a rerun of this run. Not actively used and
+                   will be removed with https://autoreduce.atlassian.net/browse/AR-1554
+        status: Foreign key to the status of the reduction run.
+        software: Foreign key to the software used to run the reduction.
     """
     # Integer fields
     run_version = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
@@ -213,6 +299,17 @@ class ReductionRun(models.Model):
 
 
 class RunNumber(models.Model):
+    """
+    Represents the run number or run numbers that a ReductionRun spans.
+
+    Normal reduction runs will have 1 RunNumber.
+    Batch reduction runs will have >1 RunNumbers.
+
+
+    Fields:
+        run_number: A run number associated with the reduction run.
+        reduction_run: Foreign key to the reduction run this run number belongs to.
+    """
     run_number = models.IntegerField(blank=False, validators=[MinValueValidator(0)])
     reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='run_numbers', on_delete=models.CASCADE)
 
@@ -221,7 +318,13 @@ class RunNumber(models.Model):
 
 
 class DataLocation(models.Model):
-    """Represents the location at which the unreduced data is stored on disk."""
+    """
+    Represents the location at which the unreduced data is stored on disk.
+
+    Fields:
+        file_path: The path to the file on disk.
+        reduction_run: Foreign key to the reduction run this data location belongs to.
+    """
     file_path = models.CharField(max_length=255)
     reduction_run = models.ForeignKey(ReductionRun, blank=False, related_name='data_location', on_delete=models.CASCADE)
 
@@ -230,7 +333,13 @@ class DataLocation(models.Model):
 
 
 class ReductionLocation(models.Model):
-    """Represents the location at which the reduced data is stored on disk."""
+    """
+    Represents the location at which the reduced data is stored on disk.
+
+    Fields:
+        file_path: The path to the file on disk.
+        reduction_run: Foreign key to the reduction run this data location belongs to.
+    """
     file_path = models.CharField(max_length=255)
     reduction_run = models.ForeignKey(
         ReductionRun,
@@ -244,7 +353,11 @@ class ReductionLocation(models.Model):
 
 
 class Setting(models.Model):
-    """Represents additional settings options for the reduction run."""
+    """
+    Represents additional settings options for the reduction run.
+
+    Possibly unused: https://autoreduce.atlassian.net/browse/AR-1555
+    """
     name = models.CharField(max_length=50, blank=False)
     value = models.CharField(max_length=50)
 
@@ -253,7 +366,16 @@ class Setting(models.Model):
 
 
 class Notification(models.Model):
-    """Represents possible notification messages regarding reduction runs."""
+    """
+    Represents possible notification messages regarding reduction runs.
+
+    Fields:
+        message: The message to be displayed.
+        is_active: Whether the notification is active or not.
+        severity: The severity of the message.
+        is_staff_only: Whether the message is only visible to staff.
+                       If False, then it will be shown to all users
+    """
     SEVERITY_CHOICES = (('i', 'info'), ('w', 'warning'), ('e', 'error'))
 
     message = models.CharField(max_length=255, blank=False)
@@ -264,7 +386,7 @@ class Notification(models.Model):
     def __str__(self):
         return f"Notification: {self.message}"
 
-    def severity_verbose(self):
+    def severity_verbose(self) -> str:
         """Return the severity as its textual value."""
         return dict(Notification.SEVERITY_CHOICES)[self.severity]
 
