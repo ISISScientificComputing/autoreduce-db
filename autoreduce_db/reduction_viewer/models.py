@@ -150,7 +150,6 @@ class ReductionRun(models.Model):
     created = models.DateTimeField(auto_now_add=True, blank=False)
     finished = models.DateTimeField(null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True, blank=False)
-    retry_when = models.DateTimeField(null=True, blank=True)
     started = models.DateTimeField(null=True, blank=True)
 
     # Bool field
