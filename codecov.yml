@@ -1,0 +1,4 @@
+ignore:
+  - "*/migrations/*.py"
+  - "*/test/*.py"
+  - "*/tests/*.py"
