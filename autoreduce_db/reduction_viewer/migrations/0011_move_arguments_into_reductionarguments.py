@@ -32,7 +32,6 @@ def convert_variables_to_reduction_arguments(apps, _):
                                                                       start_run=None,
                                                                       experiment_reference=None,
                                                                       instrument=run.instrument)
-        print(f"{run.pk} Found" if not created else f"{run.pk} Created")
         run.arguments = arguments
         run.save()
 
