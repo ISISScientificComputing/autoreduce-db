@@ -1,4 +1,7 @@
 ignore:
-  - "*/migrations/*.py"
-  - "*/test/*.py"
-  - "*/tests/*.py"
+  - "**/autoreduce_django"
+  - "**/manage.py"
+  - "**/__init__.py"
+  - "**/migrations/*.py"
+  - "**/test/*"
+  - "**/tests/*"

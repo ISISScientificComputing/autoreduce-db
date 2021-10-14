@@ -65,3 +65,5 @@ else:  # the default development DB backend
     }
 
 USE_TZ = True
+# Fixes compatibility warnings for Django 3.2+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
