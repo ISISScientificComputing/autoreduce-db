@@ -43,9 +43,6 @@ if "RUNNING_VIA_PYTEST" in os.environ or "PYTEST_CURRENT_TEST" in os.environ:
                 'PASSWORD': "password",
                 'HOST': "127.0.0.1",
                 'PORT': "3306",
-                # 'OPTIONS': {
-                #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                # },
             }
         }
     else:
