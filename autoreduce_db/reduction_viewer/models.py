@@ -251,7 +251,6 @@ class ReductionRun(models.Model):
                                   related_name='reduction_runs',
                                   on_delete=models.CASCADE)
     script = models.ForeignKey(ReductionScript, blank=False, related_name='reduction_runs', on_delete=models.CASCADE)
-    retry_run = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
     status = models.ForeignKey(Status, blank=False, related_name='+', on_delete=models.CASCADE)
     # Allowed software field to be black in code line below. Issued opened (#852) to later
     # populate this field
