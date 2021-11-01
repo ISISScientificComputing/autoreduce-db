@@ -278,8 +278,10 @@ class ReductionRun(models.Model):
         if self.run_version > 0:
             title += f" - {self.run_version}"
 
-        if self.run_title:
+        if not self.batch_run and self.run_title:
             title += f" - {self.run_title}"
+        elif self.batch_run and self.run_description:
+            title += f" - {self.run_description}"
 
         return title
 
