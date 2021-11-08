@@ -63,6 +63,7 @@ class TestReductionRun(TestCase):
         """
         next_run = 123457
         self.reduction_run.run_numbers.create(run_number=next_run)
+        self.reduction_run.batch_run = True
         assert self.reduction_run.title() == f"Batch 123456 → {next_run}"
 
     def test_title_with_multiple_run_numbers_and_version(self):
@@ -73,6 +74,7 @@ class TestReductionRun(TestCase):
         """
         next_run = 123457
         self.reduction_run.run_numbers.create(run_number=next_run)
+        self.reduction_run.batch_run = True
         run_version = self.reduction_run.run_version = 2
         assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_version}"
 
@@ -84,8 +86,11 @@ class TestReductionRun(TestCase):
         """
         next_run = 123457
         self.reduction_run.run_numbers.create(run_number=next_run)
-        run_title = self.reduction_run.run_title = "larmor0102"
-        assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_title}"
+        self.reduction_run.batch_run = True
+        self.reduction_run.run_title = "larmor0102"
+        run_description = self.reduction_run.run_description = "test description"
+        result_title = self.reduction_run.title()
+        assert result_title == f"Batch 123456 → {next_run} - {run_description}"
 
     def test_title_with_multiple_run_numbers_and_title_and_version(self):
         """
@@ -95,9 +100,12 @@ class TestReductionRun(TestCase):
         """
         next_run = 123457
         self.reduction_run.run_numbers.create(run_number=next_run)
+        self.reduction_run.batch_run = True
         run_version = self.reduction_run.run_version = 2
-        run_title = self.reduction_run.run_title = "larmor0102"
-        assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_version} - {run_title}"
+        self.reduction_run.run_title = "larmor0102"
+        run_description = self.reduction_run.run_description = "test description"
+        assert self.reduction_run.title() == f"Batch 123456 → {next_run} - {run_version} - {run_description}"
+        assert str(self.reduction_run) == f"Batch 123456 → {next_run} - {run_version} - {run_description}"
 
     def test_run_number(self):
         """Test that retrieving the status returns the expected one."""
