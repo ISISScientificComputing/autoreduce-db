@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reduction_viewer', '0011_move_arguments_into_reductionarguments'),
+        ('reduction_viewer', '0013_remove_reductionrun_retry_when'),
     ]
 
     operations = [

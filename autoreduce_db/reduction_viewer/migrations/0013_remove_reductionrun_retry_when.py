@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('reduction_viewer', '0012_auto_20211008_1214'),
+        ('reduction_viewer', '0012_remove_reductionrun_retry_run'),
     ]
 
     operations = [
