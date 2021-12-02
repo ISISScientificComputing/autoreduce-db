@@ -17,7 +17,7 @@ setup(
     version='22.0.0.dev20',
     description='ISIS Autoreduce',
     author='ISIS Autoreduction Team',
-    url='https://github.com/ISISScientificComputing/autoreduce-db/',
+    url='https://github.com/autoreduction/autoreduce-db/',
     install_requires=['autoreduce-utils==22.0.0.dev7', 'Django==3.2.8'],
     packages=find_packages(),
     long_description=long_description,

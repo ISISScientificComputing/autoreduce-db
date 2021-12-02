@@ -1,5 +1,5 @@
 # ############################################################################### #
-# Autoreduction Repository : https://github.com/ISISScientificComputing/autoreduce
+# Autoreduction Repository : https://github.com/autoreduction/autoreduce
 #
 # Copyright &copy; 2019 ISIS Rutherford Appleton Laboratory UKRI
 # SPDX - License - Identifier: GPL-3.0-or-later
@@ -240,7 +240,7 @@ class ReductionRun(models.Model):
 
     # Bool field
     hidden_in_failviewer = models.BooleanField(default=False)
-    overwrite = models.NullBooleanField(default=True)
+    overwrite = models.BooleanField(default=False)
     batch_run = models.BooleanField(default=False)
 
     # Foreign Keys
