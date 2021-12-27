@@ -9,4 +9,4 @@ pytest-cov==3.0.0
 pytest-django==4.4.0
 pytest-xdist==2.4.0
 vulture==2.3
-yapf==0.31.0
+yapf==0.32.0
