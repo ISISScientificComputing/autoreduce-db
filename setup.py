@@ -14,11 +14,11 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='autoreduce_db',
-    version='22.0.0.dev28',
+    version='22.0.0.dev29',
     description='ISIS Autoreduce',
     author='ISIS Autoreduction Team',
     url='https://github.com/autoreduction/autoreduce-db/',
-    install_requires=['autoreduce-utils==22.0.0.dev14', 'Django>=3.2.10'],
+    install_requires=['autoreduce-utils==22.0.0.dev15', 'Django>=3.2.10'],
     packages=find_packages(),
     long_description=long_description,
     long_description_content_type='text/markdown',
