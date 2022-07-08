@@ -1,5 +1,5 @@
 name: Tests
-on: [ push ]
+on: [push]
 
 jobs:
   pytest:
@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.6']
+        python-version: ["3.8"]
 
     steps:
       - uses: actions/checkout@v2
@@ -17,13 +17,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
 
       - uses: autoreduction/autoreduce-actions/build@main
         with:
@@ -43,7 +36,7 @@ jobs:
 
       - name: Build package for publishing
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: python3 -m pip install wheel && python3 setup.py sdist bdist_wheel
+        run: python3 -m pip install --upgrade build wheel && python -m build
 
       - name: Publish distribution 📦 to PyPI
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -57,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.6', '3.8']
+        python-version: ["3.8"]
 
     steps:
       - uses: actions/checkout@v2
@@ -67,17 +60,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ job.container.image }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ job.container.image }}-pip-
-
       - name: Pip install
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
           pip install -e .
 
   Inspection:
@@ -86,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.8']
+        python-version: ["3.8"]
 
     steps:
       - uses: actions/checkout@v2
@@ -95,13 +80,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
 
       - uses: autoreduction/autoreduce-actions/build@main
         with:
@@ -111,5 +89,3 @@ jobs:
       - uses: autoreduction/autoreduce-actions/code_inspection@main
         with:
           package_name: autoreduce_db
-
-
