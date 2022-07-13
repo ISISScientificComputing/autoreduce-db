@@ -6,9 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "autoreduce_db"
 version = "22.0.0.dev36"
 description = "Database config for the Autoreduction service"
+readme = "README.md"
 license = { text = "GNU General Public License" }
 classifiers = ["Framework :: Django", "Programming Language :: Python :: 3"]
 dependencies = ['autoreduce_utils==22.0.0.dev22', 'Django==4.0.6']
+
 [project.urls]
 "Repository" = "https://github.com/autoreduction/db"
 "Wiki" = "https://github.com/autoreduction/queue-processor/wiki"
