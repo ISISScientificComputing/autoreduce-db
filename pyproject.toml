@@ -15,6 +15,9 @@ dependencies = ['autoreduce_utils==22.0.0.dev22', 'Django==4.0.6']
 "Repository" = "https://github.com/autoreduction/db"
 "Wiki" = "https://github.com/autoreduction/queue-processor/wiki"
 
+[tool.setuptools]
+packages = ["autoreduce_db"]
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "autoreduce_db.autoreduce_django.settings"
 norecursedirs = [".*", "dist", "CVS", "_darcs", "{arch}", "*.egg"]
