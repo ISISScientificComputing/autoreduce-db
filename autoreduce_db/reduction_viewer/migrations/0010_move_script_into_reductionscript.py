@@ -16,7 +16,8 @@ def move_script_into_reduction_script(apps, _):
     for run in ReductionRun.objects.all():
         try:
             rscript = ReductionScript.objects.get(text=run.tmp_script)
-        except:  # pylint:disable=bare-except
+        except Exception as exception:  # pylint:disable=broad-except
+            print(str(exception))
             rscript = ReductionScript.objects.create(text=run.tmp_script)
         rscript.save()
         run.script_id = rscript.pk

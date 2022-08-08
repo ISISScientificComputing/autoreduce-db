@@ -19,23 +19,19 @@ class Migration(migrations.Migration):
             model_name='output',
             name='type',
         ),
-        migrations.DeleteModel(
-            name='Setting',
-        ),
+        migrations.DeleteModel(name='Setting', ),
         migrations.AlterField(
             model_name='reductionarguments',
             name='instrument',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='arguments', to='reduction_viewer.instrument'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='arguments',
+                                    to='reduction_viewer.instrument'),
         ),
         migrations.AlterField(
             model_name='reductionrun',
             name='overwrite',
             field=models.BooleanField(default=False),
         ),
-        migrations.DeleteModel(
-            name='Output',
-        ),
-        migrations.DeleteModel(
-            name='OutputType',
-        ),
+        migrations.DeleteModel(name='Output', ),
+        migrations.DeleteModel(name='OutputType', ),
     ]
