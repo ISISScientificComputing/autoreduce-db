@@ -11,6 +11,9 @@ license = { text = "GNU General Public License" }
 classifiers = ["Framework :: Django", "Programming Language :: Python :: 3"]
 dependencies = ['autoreduce_utils==22.0.0.dev23', 'Django==4.0.6']
 
+[project.optional-dependencies]
+dev = []
+
 [project.urls]
 "Repository" = "https://github.com/autoreduction/db"
 "Wiki" = "https://github.com/autoreduction/queue-processor/wiki"
