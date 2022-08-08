@@ -10,5 +10,4 @@ class Migration(migrations.Migration):
         ('instrument', '0002_alter_variable_value'),
     ]
 
-    operations = [
-    ]
+    operations = []

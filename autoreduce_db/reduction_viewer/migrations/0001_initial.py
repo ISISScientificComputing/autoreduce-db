@@ -9,8 +9,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -35,7 +34,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('message', models.CharField(max_length=255)),
                 ('is_active', models.BooleanField(default=True)),
-                ('severity', models.CharField(choices=[('i', 'info'), ('w', 'warning'), ('e', 'error')], default='i', max_length=1)),
+                ('severity',
+                 models.CharField(choices=[('i', 'info'), ('w', 'warning'), ('e', 'error')], default='i',
+                                  max_length=1)),
                 ('is_staff_only', models.BooleanField(default=False)),
             ],
         ),
@@ -66,7 +67,10 @@ class Migration(migrations.Migration):
             name='Status',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.CharField(choices=[('q', 'Queued'), ('p', 'Processing'), ('s', 'Skipped'), ('c', 'Completed'), ('e', 'Error')], max_length=1)),
+                ('value',
+                 models.CharField(choices=[('q', 'Queued'), ('p', 'Processing'), ('s', 'Skipped'), ('c', 'Completed'),
+                                           ('e', 'Error')],
+                                  max_length=1)),
             ],
         ),
         migrations.CreateModel(
@@ -90,11 +94,30 @@ class Migration(migrations.Migration):
                 ('cancel', models.BooleanField(default=False)),
                 ('hidden_in_failviewer', models.BooleanField(default=False)),
                 ('overwrite', models.NullBooleanField(default=True)),
-                ('experiment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reduction_runs', to='reduction_viewer.experiment')),
-                ('instrument', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reduction_runs', to='reduction_viewer.instrument')),
-                ('retry_run', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='reduction_viewer.reductionrun')),
-                ('software', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='reduction_runs', to='reduction_viewer.software')),
-                ('status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='reduction_viewer.status')),
+                ('experiment',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='reduction_runs',
+                                   to='reduction_viewer.experiment')),
+                ('instrument',
+                 models.ForeignKey(null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='reduction_runs',
+                                   to='reduction_viewer.instrument')),
+                ('retry_run',
+                 models.ForeignKey(blank=True,
+                                   null=True,
+                                   on_delete=django.db.models.deletion.SET_NULL,
+                                   to='reduction_viewer.reductionrun')),
+                ('software',
+                 models.ForeignKey(blank=True,
+                                   null=True,
+                                   on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='reduction_runs',
+                                   to='reduction_viewer.software')),
+                ('status',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='+',
+                                   to='reduction_viewer.status')),
             ],
         ),
         migrations.CreateModel(
@@ -102,7 +125,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('file_path', models.CharField(max_length=255)),
-                ('reduction_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reduction_location', to='reduction_viewer.reductionrun')),
+                ('reduction_run',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='reduction_location',
+                                   to='reduction_viewer.reductionrun')),
             ],
         ),
         migrations.CreateModel(
@@ -110,8 +136,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('file_path', models.CharField(max_length=255)),
-                ('job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='output', to='reduction_viewer.reductionrun')),
-                ('type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='output', to='reduction_viewer.outputtype')),
+                ('job',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='output',
+                                   to='reduction_viewer.reductionrun')),
+                ('type',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='output',
+                                   to='reduction_viewer.outputtype')),
             ],
         ),
         migrations.CreateModel(
@@ -119,7 +151,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('file_path', models.CharField(max_length=255)),
-                ('reduction_run', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='data_location', to='reduction_viewer.reductionrun')),
+                ('reduction_run',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                   related_name='data_location',
+                                   to='reduction_viewer.reductionrun')),
             ],
         ),
     ]
